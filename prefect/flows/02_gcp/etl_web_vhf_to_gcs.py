@@ -23,10 +23,8 @@ def fetch(dataset_url: str) -> pd.DataFrame:
 def clean(df: pd.DataFrame) -> pd.DataFrame:
     """Fix dtype issues"""
     print(df.columns)
-    # df["lpep_pickup_datetime"] = pd.to_datetime(df["lpep_pickup_datetime"])
     df['DOlocationID'].astype(float)
 
-    # df["lpep_dropoff_datetime"] = pd.to_datetime(df["lpep_dropoff_datetime"])
     print(df.head(2))
     print(f"columns: {df.dtypes}")
     print(f"rows: {len(df)}")
@@ -52,9 +50,6 @@ def write_gcs(path: Path) -> None:
 @flow()
 def etl_web_vhf_to_gcs(year:int, month:int) -> None:
     """The main ETL function"""
-    # color = "green"
-    # year = 2020
-    # month = 1
     dataset_file = f"fhv_tripdata_{year}-{month:02}"
     # dataset_url = f"https://github.com/DataTalksClub/nyc-tlc-data/releases/download/{color}/{dataset_file}.csv.gz"
     dataset_url = f"https://github.com/DataTalksClub/nyc-tlc-data/releases/download/fhv/fhv_tripdata_{year}-{month:02}.csv.gz"
@@ -65,14 +60,14 @@ def etl_web_vhf_to_gcs(year:int, month:int) -> None:
     path = write_local(df_clean,dataset_file)
     path = Path(f"prefect/data/fhv/{dataset_file}.parquet")
 
-    # write_gcs(path)
+    write_gcs(path)
 
 
 @flow()
 def etl_parent_web_vhf_to_gcs() -> None:
 
     year = 2019
-    months = [5,6,7]
+    months = [1,2,3,4,5,6,7,8,9,10,11,12,]
     for month in months:
         etl_web_vhf_to_gcs(year,month)
 
